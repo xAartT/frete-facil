@@ -2,7 +2,7 @@ import { pool } from './index.js';
 
 const sql = `
   DO $$ BEGIN
-    CREATE TYPE tipo_usuario AS ENUM ('CLIENTE', 'MOTORISTA', 'ADMIN');
+    CREATE TYPE tipo_usuario AS ENUM ('P', 'S', 'A', 'M');
   EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
   DO $$ BEGIN
