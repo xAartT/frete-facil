@@ -3,6 +3,15 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import router from './routers/index.js';
+import { seeder } from './configs/liquibase.js';
+
+async function start() {
+  await seeder();
+
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+  });
+};
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,6 +38,4 @@ app.use((err, req, res, next) => {
   res.status(500).json({ erro: 'Erro interno do servidor.' });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
-});
+start();
