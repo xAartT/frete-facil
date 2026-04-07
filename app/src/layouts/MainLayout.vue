@@ -9,22 +9,38 @@
       :breakpoint="500"
       style="background-color: #F8FAFC;"
     >
-      <q-scroll-area class="fit">
+      <div class="column full-height">
+        
+        <q-scroll-area class="col">
+          <q-list padding>
+            
+            <q-item>
+              <q-item-section avatar>
+                <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleMiniState" />
+              </q-item-section>
+            </q-item>
+
+            <EssentialLink
+              v-for="link in essentialLinks"
+              :key="link.title"
+              v-bind="link"
+            />
+          </q-list>
+        </q-scroll-area>
+
+        <q-separator /> 
         <q-list padding>
-          
-          <q-item>
+          <q-item clickable v-ripple to="/login">
             <q-item-section avatar>
-              <q-btn flat dense round icon="local_shipping" aria-label="Menu" @click="toggleMiniState" />
+              <q-icon name="arrow_back" color="black" />
+            </q-item-section>
+            <q-item-section class="text-black text-weight-bold">
+              Sair
             </q-item-section>
           </q-item>
-
-          <EssentialLink
-            v-for="link in essentialLinks"
-            :key="link.title"
-            v-bind="link"
-          />
         </q-list>
-      </q-scroll-area>
+
+      </div>
     </q-drawer>
 
     <q-page-container>
@@ -36,9 +52,6 @@
 <script setup>
 import { ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
-
-
-
 
 const essentialLinks = [
   { title: 'Dashboard', icon: 'dashboard', link: 'https://quasar.dev' },
