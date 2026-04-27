@@ -3,3 +3,4 @@ node_modules/
 package-lock.json
 *.gitignore
 front/.vscode/
+app/.quasar
