@@ -7,6 +7,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev:api": "node --watch api/src/index.js",
+    "dev:app": "cd app && npm run dev",
+    "dev": "npm run dev:app && npm run dev:api",
     "migrate": "node api/src/configs/start.js"
   },
   "dependencies": {
@@ -17,5 +19,8 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.12.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }
