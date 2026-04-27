@@ -8,7 +8,7 @@
     "start": "node src/index.js",
     "dev:api": "node --watch api/src/index.js",
     "dev:app": "cd app && npm run dev",
-    "dev": "npm run dev:app && npm run dev:api",
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:app\"",
     "migrate": "node api/src/configs/start.js"
   },
   "dependencies": {
