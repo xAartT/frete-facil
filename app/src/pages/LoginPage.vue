@@ -115,7 +115,8 @@ async function fazerLogin() {
       body: JSON.stringify({
         login: login.value,  
         senha: senha.value  
-      })
+      }),
+     Credentials: 'include'
     })
 
     const data = await response.json()
@@ -124,12 +125,6 @@ async function fazerLogin() {
 
       throw new Error(data.mensagem || 'Erro ao fazer login.')
     }
-
-    localStorage.setItem('access_token', data.accessToken)
-    localStorage.setItem('refresh_token', data.refreshToken)
-    
-    
-    localStorage.setItem('usuario_dados', JSON.stringify(data.usuario))
     
     $q.notify({
       type: 'positive',
