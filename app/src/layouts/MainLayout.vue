@@ -54,11 +54,11 @@ import { ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
 
 const essentialLinks = [
-  { title: 'Dashboard', icon: 'dashboard', link: 'https://quasar.dev' },
-  { title: 'Solicitar frete', icon: 'add_box', link: 'https://github.com/quasarframework' },
-  { title: 'Oferece frete', icon: 'sell', link: 'https://chat.quasar.dev' },
-  { title: 'Meus fretes', icon: 'record_voice_over', link: 'https://forum.quasar.dev' },
-  { title: 'Mensagens', icon: 'rss_feed', link: 'https://twitter.com/quasarframework' }
+  { title: 'Dashboard', icon: 'dashboard', link: '/dashboard' },
+  { title: 'Solicitar frete', icon: 'add_box', link: '/solicitar-frete' },
+  { title: 'Oferece frete', icon: 'sell', link: '/oferecer-frete' },
+  { title: 'Meus fretes', icon: 'assignment', link: '/meus-fretes' },
+  { title: 'Mensagens', icon: 'rss_feed', link: '/mensagens' }
 ]
 
 const drawer = ref(true)
