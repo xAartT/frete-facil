@@ -18,7 +18,7 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.use('/api', router);
+app.use('/api',router);
 
 app.use((req, res) => {
   res.status(404).json({ erro: 'Rota não encontrada.' });

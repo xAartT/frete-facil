@@ -46,7 +46,8 @@ const sql = `
     estado VARCHAR(20),
     pais VARCHAR(20),
     latitude DECIMAL(9,6),
-    longitude DECIMAL(9,6)
+    longitude DECIMAL(9,6),
+    cidade VARCHAR(50)
   );
 
   CREATE TABLE IF NOT EXISTS veiculos (
