@@ -39,8 +39,8 @@ export const criar = async (req, res) => {
 
 export const atualizar = async (req, res) => {
   try {
-    const { id } = req.query; // PATCH /enderecos?id=1
-    if (!id) return res.status(400).json({ erro: 'Informe o id do endereço na query string (?id=).' });
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ erro: 'Informe o id do endereço na URL.' });
 
     const resultado = await enderecosService.atualizar(id, req.usuario.id, req.body);
     const erro = trataErro(res, resultado);
@@ -53,8 +53,8 @@ export const atualizar = async (req, res) => {
 
 export const deletar = async (req, res) => {
   try {
-    const { id } = req.query; // DELETE /enderecos?id=1
-    if (!id) return res.status(400).json({ erro: 'Informe o id do endereço na query string (?id=).' });
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ erro: 'Informe o id do endereço na URL.' });
 
     const resultado = await enderecosService.deletar(id, req.usuario.id);
     const erro = trataErro(res, resultado);

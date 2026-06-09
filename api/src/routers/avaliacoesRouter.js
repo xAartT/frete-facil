@@ -6,5 +6,8 @@ const router = Router();
 router.post('/encomenda/:encomenda_id', avaliacoesController.criar);
 router.get('/usuario/:usuario_id', avaliacoesController.listarDoUsuario);
 router.get('/usuario/:usuario_id/media', avaliacoesController.mediaDaNotas);
+router.get('/:id', avaliacoesController.buscarPorId);
+router.patch('/:id', avaliacoesController.atualizar);
+router.delete('/:id', avaliacoesController.deletar);
 
 export default router;

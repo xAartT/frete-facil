@@ -54,8 +54,6 @@ export async function logout(req, res) {
   try {
     await authService.logout(req.usuario.id);
 
-    console.log(req.usuario.id);
-
     res.clearCookie(COOKIE_NOME, { ...COOKIE_OPTS, maxAge: 0 });
 
     return res.status(200).json({ mensagem: 'Logout realizado com sucesso.' });

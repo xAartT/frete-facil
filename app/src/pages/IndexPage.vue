@@ -6,6 +6,9 @@
 
 <script>
 import { defineComponent } from 'vue';
+import { api } from 'src/boot/axios';
+
+api.post("/auth/refresh");
 
 export default defineComponent({
   name: 'IndexPage'

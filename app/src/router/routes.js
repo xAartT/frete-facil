@@ -8,7 +8,7 @@ const routes = [
     path: '/cadastro',
     component: () => import('pages/CadastroPage.vue')
   },
-  
+
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
