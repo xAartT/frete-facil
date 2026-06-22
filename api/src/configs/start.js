@@ -2,7 +2,7 @@ import { pool } from './index.js';
 
 const sql = `
   DO $$ BEGIN
-    CREATE TYPE tipo_usuario AS ENUM ('P', 'S', 'A', 'M');
+    CREATE TYPE tipo_usuario AS ENUM ('CLIENTE', 'MOTORISTA', 'AMBOS', 'ADMIN');
   EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
   DO $$ BEGIN
@@ -73,6 +73,8 @@ const sql = `
     descricao TEXT NOT NULL,
     peso NUMERIC(6,2),
     valor_sugerido NUMERIC(10,2),
+    distancia NUMERIC(8,2),
+    tipo_veiculo VARCHAR(30),
     status status_encomenda DEFAULT 'DISPONIVEL',
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     data_envio TIMESTAMP,
@@ -116,6 +118,16 @@ const sql = `
     usuario_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
     access_token TEXT NOT NULL,
     refresh_token TEXT NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS mensagens (
+    id SERIAL PRIMARY KEY,
+    remetente_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    destinatario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    encomenda_id INTEGER REFERENCES encomendas(id) ON DELETE SET NULL,
+    texto TEXT NOT NULL,
+    lida BOOLEAN DEFAULT FALSE,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
 `;

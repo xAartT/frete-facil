@@ -1,4 +1,5 @@
 import * as propostasService from '../services/propostasService.js';
+import * as encomendasService from '../services/encomendasService.js';
 
 export const criar = async (req, res) => {
   try {
@@ -30,7 +31,17 @@ export const criar = async (req, res) => {
 
 export const listarPorEncomenda = async (req, res) => {
   try {
-    const propostas = await propostasService.listarPorEncomenda(parseInt(req.params.encomenda_id));
+    const encomendaId = parseInt(req.params.encomenda_id);
+
+    const encomenda = await encomendasService.buscarPorId(encomendaId);
+    if (!encomenda) {
+      return res.status(404).json({ erro: 'Encomenda não encontrada.' });
+    }
+    if (encomenda.cliente_id !== req.usuario.id) {
+      return res.status(403).json({ erro: 'Apenas o dono da encomenda pode ver as propostas.' });
+    }
+
+    const propostas = await propostasService.listarPorEncomenda(encomendaId);
     return res.json(propostas);
   } catch (err) {
     return res.status(500).json({ erro: 'Erro ao listar propostas.' });

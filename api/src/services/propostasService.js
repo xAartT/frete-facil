@@ -106,12 +106,13 @@ export const aceitar = async (proposta_id, usuario_id) => {
       [proposta.motorista_id, 'ACEITA', proposta.encomenda_id]
     );
 
-    // Criar pagamento
-    const taxa = resultado.rows[0].valor_sugerido * 0.1; // 10% de taxa
+    // Criar pagamento com base no valor da proposta aceita
+    const valorFinal = Number(proposta.valor_proposto);
+    const taxa = valorFinal * 0.1; // 10% de taxa da plataforma
     await client.query(
       `INSERT INTO pagamentos (encomenda_id, valor_total, taxa_plataforma, valor_motorista, status)
        VALUES ($1, $2, $3, $4, 'PENDENTE')`,
-      [proposta.encomenda_id, resultado.rows[0].valor_sugerido, taxa, resultado.rows[0].valor_sugerido - taxa]
+      [proposta.encomenda_id, valorFinal, taxa, valorFinal - taxa]
     );
 
     await client.query('COMMIT');

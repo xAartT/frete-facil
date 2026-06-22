@@ -7,25 +7,29 @@ export const criar = async ({
   descricao,
   peso,
   valor_sugerido,
+  distancia,
+  tipo_veiculo,
   observacao,
 }) => {
   const { rows } = await pool.query(
     `INSERT INTO encomendas (
       cliente_id, endereco_coleta_id, endereco_entrega_id,
-      descricao, peso, valor_sugerido, observacao, status
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, 'DISPONIVEL')
+      descricao, peso, valor_sugerido, distancia, tipo_veiculo, observacao, status
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'DISPONIVEL')
     RETURNING *`,
-    [cliente_id, endereco_coleta_id, endereco_entrega_id, descricao, peso, valor_sugerido, observacao]
+    [cliente_id, endereco_coleta_id, endereco_entrega_id, descricao, peso, valor_sugerido, distancia || null, tipo_veiculo || null, observacao || null]
   );
   return rows[0];
 };
 
 export const listarDisponiveis = async () => {
   const { rows } = await pool.query(
-    `SELECT e.*, 
+    `SELECT e.*,
             c.nome as cliente_nome, c.login as cliente_login,
             ec.logradouro as coleta_logradouro, ec.cidade as coleta_cidade,
-            ee.logradouro as entrega_logradouro, ee.cidade as entrega_cidade
+            ec.bairro as coleta_bairro, ec.numero as coleta_numero, ec.cep as coleta_cep, ec.estado as coleta_estado,
+            ee.logradouro as entrega_logradouro, ee.cidade as entrega_cidade,
+            ee.bairro as entrega_bairro, ee.numero as entrega_numero, ee.cep as entrega_cep, ee.estado as entrega_estado
      FROM encomendas e
      LEFT JOIN usuarios c ON e.cliente_id = c.id
      LEFT JOIN enderecos ec ON e.endereco_coleta_id = ec.id
@@ -38,16 +42,18 @@ export const listarDisponiveis = async () => {
 
 export const minhasEncomendas = async (usuario_id) => {
   const { rows } = await pool.query(
-    `SELECT e.*, 
+    `SELECT e.*,
             c.nome as cliente_nome, c.login as cliente_login,
             m.nome as motorista_nome, m.login as motorista_login,
             ec.logradouro as coleta_logradouro, ec.cidade as coleta_cidade,
-            ee.logradouro as entrega_logradouro, ee.cidade as entrega_cidade
+            ee.logradouro as entrega_logradouro, ee.cidade as entrega_cidade,
+            pa.valor_proposto as valor_aceito
      FROM encomendas e
      LEFT JOIN usuarios c ON e.cliente_id = c.id
      LEFT JOIN usuarios m ON e.motorista_id = m.id
      LEFT JOIN enderecos ec ON e.endereco_coleta_id = ec.id
      LEFT JOIN enderecos ee ON e.endereco_entrega_id = ee.id
+     LEFT JOIN propostas pa ON pa.encomenda_id = e.id AND pa.status = 'ACEITA'
      WHERE e.cliente_id = $1 OR e.motorista_id = $1
      ORDER BY e.data_criacao DESC`,
     [usuario_id]

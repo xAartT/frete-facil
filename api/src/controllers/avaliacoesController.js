@@ -30,6 +30,15 @@ export const criar = async (req, res) => {
   }
 };
 
+export const listarPorEncomenda = async (req, res) => {
+  try {
+    const avaliacoes = await avaliacoesService.listarPorEncomenda(parseInt(req.params.encomenda_id));
+    return res.json(avaliacoes);
+  } catch (err) {
+    return res.status(500).json({ erro: 'Erro ao listar avaliações da encomenda.' });
+  }
+};
+
 export const listarDoUsuario = async (req, res) => {
   try {
     const avaliacoes = await avaliacoesService.listarDoUsuario(parseInt(req.params.usuario_id));

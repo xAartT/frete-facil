@@ -1,29 +1,24 @@
 <template>
-  <q-page padding class="bg-blue-grey-1" style="height: 100vh; overflow: hidden;">
+  <q-page class="bg-blue-grey-1 column no-wrap q-pa-md" style="height: 100vh; overflow: hidden;">
 
-    <div class="row justify-between items-center q-mb-lg">
-      <div class="text-h5 text-weight-bold text-grey-9">Nova Solicitação de Frete</div>
-      <div class="text-grey-6 flex items-center text-caption">
-        <q-icon name="notifications_none" size="sm" class="q-mr-sm cursor-pointer" />
-        <span class="q-ml-sm q-pl-sm" style="border-left: 1px solid #ccc;">ID Solicitação: #8291-B</span>
+    <div class="row justify-between items-center q-mb-md">
+      <div class="text-h5 text-weight-bold text-grey-9">Nova solicitação</div>
+      <div class="flex items-center q-gutter-sm">
+        <div class="text-grey-6 flex items-center text-caption">
+          <q-icon name="notifications_none" size="sm" class="q-mr-sm cursor-pointer" />
+          <span class="q-ml-sm q-pl-sm" style="border-left: 1px solid #ccc;">ID Solicitação: #8291-B</span>
+        </div>
+        <q-btn
+          outline color="primary" label="Publicar solicitação" icon="send"
+          :disable="!origemOpcao || !destinoOpcao"
+          @click="publicarSolicitacao"
+        />
       </div>
     </div>
 
-    <div class="row q-col-gutter-md">
-
-      <!-- Card de campos: largura total, campos em linha -->
-      <div class="col-12">
-        <q-card flat bordered class="q-pa-lg rounded-borders">
-          <div class="row justify-between items-center q-mb-md">
-            <div class="text-h6 text-weight-bold text-grey-9">Detalhes do Frete</div>
-            <q-btn
-              outline color="primary" label="Publicar solicitação" icon="send"
-              :disable="!origemOpcao || !destinoOpcao"
-              @click="publicarSolicitacao"
-            />
-          </div>
-
-          <div class="row q-col-gutter-md items-end">
+    <!-- Card de campos: largura total, campos em linha -->
+    <q-card flat bordered class="q-pa-lg rounded-borders q-mb-md">
+      <div class="row q-col-gutter-md items-end">
             <div class="col-12 col-md-4">
               <div class="text-weight-medium text-grey-8 q-mb-xs text-caption">Endereço de Coleta (Origem)</div>
               <q-select
@@ -84,6 +79,17 @@
               </q-select>
             </div>
 
+            <div class="col-12 col-md-4">
+              <div class="text-weight-medium text-grey-8 q-mb-xs text-caption">Descrição do Item</div>
+              <q-input
+                outlined dense
+                v-model="form.descricao"
+                placeholder="Ex: Caixas de eletrônicos, móveis..."
+              >
+                <template v-slot:prepend><q-icon name="inventory_2" color="grey-5" size="sm" /></template>
+              </q-input>
+            </div>
+
             <div class="col-6 col-sm-4 col-md">
               <div class="text-weight-medium text-grey-8 q-mb-xs text-caption">Distância (km)</div>
               <q-input outlined dense v-model="form.distancia" readonly placeholder="Auto">
@@ -94,17 +100,22 @@
               <div class="text-weight-medium text-grey-8 q-mb-xs text-caption">Peso Estimado (kg)</div>
               <q-input outlined dense v-model="form.peso" placeholder="Ex: 450" />
             </div>
-            <div class="col-12 col-sm-4 col-md">
+            <div class="col-6 col-sm-4 col-md">
               <div class="text-weight-medium text-grey-8 q-mb-xs text-caption">Tipo de Veículo</div>
               <q-select outlined dense v-model="form.veiculo" :options="opcoesVeiculos" label="Selecione..." />
             </div>
-          </div>
-        </q-card>
+            <div class="col-6 col-sm-4 col-md">
+              <div class="text-weight-medium text-grey-8 q-mb-xs text-caption">Valor sugerido (opcional)</div>
+              <q-input outlined dense type="number" v-model="form.valorSugerido" prefix="R$" placeholder="Ex: 150">
+                <template v-slot:prepend><q-icon name="payments" color="grey-5" size="sm" /></template>
+              </q-input>
+            </div>
       </div>
+    </q-card>
 
-      <!-- Mapa: largura total -->
-      <div class="col-12" style="position: relative;">
-        <div ref="mapContainer" class="rounded-borders" style="width: 100%; height: calc(100vh - 270px); min-height: 300px; z-index: 1;"></div>
+    <!-- Mapa: ocupa o espaço restante da tela -->
+    <div class="col relative-position" style="min-height: 0;">
+      <div ref="mapContainer" class="rounded-borders" style="width: 100%; height: 100%; min-height: 200px; z-index: 1;"></div>
 
         <q-btn
           round color="white" text-color="primary" icon="fullscreen"
@@ -120,8 +131,6 @@
           </q-chip>
         </div>
       </div>
-
-    </div>
 
     <q-dialog v-model="mapaExpandido" maximized transition-show="fade" transition-hide="fade" @show="recalcularTamanhoMapa">
       <q-card class="bg-white column no-wrap">
@@ -140,8 +149,11 @@
 
 <script setup>
 import { reactive, ref, onMounted, nextTick } from 'vue'
+import { useQuasar } from 'quasar'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
+
+const $q = useQuasar()
 
 const mapContainer = ref(null)
 const mapContainerExpanded = ref(null)
@@ -161,22 +173,97 @@ const origemSugestoes = ref([])
 const destinoSugestoes = ref([])
 
 const form = reactive({
+  descricao: '',
   distancia: '',
   peso: '',
   veiculo: null,
+  valorSugerido: '',
   aceitaTermos: false
 })
 
 const opcoesVeiculos = ['Moto', 'Carro de passeio', 'Picape', 'Furgão']
 
-function publicarSolicitacao() {
-  console.log('Publicando solicitação:', {
-    origem: origemOpcao.value?.display_name,
-    destino: destinoOpcao.value?.display_name,
-    distancia: form.distancia,
-    peso: form.peso,
-    veiculo: form.veiculo,
+function limparFormulario() {
+  limparPonto('origem')
+  limparPonto('destino')
+  form.descricao = ''
+  form.peso = ''
+  form.veiculo = null
+  form.distancia = ''
+  form.valorSugerido = ''
+}
+
+const API_URL = 'http://localhost:3000/api'
+
+function montarEnderecoPayload(opcao) {
+  const a = opcao.address || {}
+  const corta = (v, n) => (v ? String(v).slice(0, n) : null)
+  return {
+    cep: corta(a.postcode, 9),
+    numero: corta(a.house_number, 10),
+    logradouro: corta(a.road || a.pedestrian || opcao.display_name, 100),
+    bairro: corta(a.suburb || a.neighbourhood || a.city_district, 50),
+    complemento: null,
+    cidade: corta(a.city || a.town || a.village || a.municipality, 50),
+    estado: corta(a.state, 20),
+    pais: corta(a.country, 20),
+    latitude: Number(opcao.lat),
+    longitude: Number(opcao.lon),
+  }
+}
+
+async function criarEndereco(opcao) {
+  const res = await fetch(`${API_URL}/enderecos`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(montarEnderecoPayload(opcao)),
   })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.erro || 'Erro ao salvar endereço.')
+  return data
+}
+
+async function publicarSolicitacao() {
+  if (!origemOpcao.value || !destinoOpcao.value) {
+    $q.notify({ type: 'negative', message: 'Informe origem e destino.', position: 'top-right' })
+    return
+  }
+  if (!form.descricao || !form.peso || !form.veiculo) {
+    $q.notify({ type: 'negative', message: 'Preencha descrição, peso e tipo de veículo.', position: 'top-right' })
+    return
+  }
+
+  try {
+    $q.loading.show({ message: 'Publicando solicitação...' })
+
+    const coleta = await criarEndereco(origemOpcao.value)
+    const entrega = await criarEndereco(destinoOpcao.value)
+
+    const res = await fetch(`${API_URL}/encomendas`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        endereco_coleta_id: coleta.id,
+        endereco_entrega_id: entrega.id,
+        descricao: form.descricao,
+        peso: Number(form.peso),
+        distancia: form.distancia ? Number(form.distancia) : null,
+        tipo_veiculo: form.veiculo || null,
+        valor_sugerido: form.valorSugerido ? Number(form.valorSugerido) : null,
+      }),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.erro || 'Erro ao publicar solicitação.')
+
+    $q.notify({ type: 'positive', message: 'Solicitação publicada com sucesso!', position: 'top-right' })
+    limparFormulario()
+  } catch (error) {
+    $q.notify({ type: 'negative', message: error.message, position: 'top-right', icon: 'warning' })
+  } finally {
+    $q.loading.hide()
+  }
 }
 
 async function pesquisarNominatim(texto) {
@@ -235,10 +322,9 @@ async function aoSelecionarDestino(opcao) {
 
 async function buscarEndereco(lat, lng) {
   try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
-    const data = await res.json()
-    return data.display_name
-  } catch { return `${lat.toFixed(4)}, ${lng.toFixed(4)}` }
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&addressdetails=1&lat=${lat}&lon=${lng}`)
+    return await res.json()
+  } catch { return { display_name: `${lat.toFixed(4)}, ${lng.toFixed(4)}`, address: {} } }
 }
 
 async function traçarRotaNasRuas(origemLatLng, destinoLatLng) {
@@ -283,15 +369,15 @@ async function tratarCliqueMapa(e) {
   if (!markerOrigem) {
     markerOrigem = L.circleMarker([lat, lng], { color: '#1976D2', radius: 8, fillOpacity: 1 }).addTo(map)
     carregandoOrigem.value = true
-    const nome = await buscarEndereco(lat, lng)
+    const dados = await buscarEndereco(lat, lng)
     carregandoOrigem.value = false
-    origemOpcao.value = { display_name: nome, lat: String(lat), lon: String(lng) }
+    origemOpcao.value = { display_name: dados.display_name, address: dados.address, lat: String(lat), lon: String(lng) }
   } else if (!markerDestino) {
     markerDestino = L.circleMarker([lat, lng], { color: '#21BA45', radius: 8, fillOpacity: 1 }).addTo(map)
     carregandoDestino.value = true
-    const nome = await buscarEndereco(lat, lng)
+    const dados = await buscarEndereco(lat, lng)
     carregandoDestino.value = false
-    destinoOpcao.value = { display_name: nome, lat: String(lat), lon: String(lng) }
+    destinoOpcao.value = { display_name: dados.display_name, address: dados.address, lat: String(lat), lon: String(lng) }
 
     await traçarRotaNasRuas(markerOrigem.getLatLng(), markerDestino.getLatLng())
   }

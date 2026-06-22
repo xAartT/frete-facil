@@ -155,12 +155,14 @@ const senha = ref('')
 const confirmarSenha = ref('')
 
 async function salvarCadastro() {
+  const mapaTipo = { solicitante: 'CLIENTE', prestador: 'MOTORISTA', ambos: 'AMBOS' }
+
   const payload = {
     nome: nome.value,
     login: login.value,
     email: email.value,
     dataNascimento: dataNascimento.value,
-    tipo: 'ADMIN',//tipoUsuario.value,
+    tipo: mapaTipo[tipoUsuario.value] || 'AMBOS',
     senha: senha.value
   }
   

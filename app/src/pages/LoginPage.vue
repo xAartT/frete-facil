@@ -46,7 +46,7 @@
                     outlined
                     v-model="senha"
                     placeholder="Senha"
-                    type="password"
+                    :type="mostrarSenha ? 'text' : 'password'"
                     class="login-input"
                     dense
                     :rules="[val => !!val || 'O campo Senha é obrigatório']"
@@ -55,7 +55,11 @@
                       <q-icon name="key" class="text-grey-7" />
                     </template>
                     <template v-slot:append>
-                      <q-icon name="visibility" class="text-grey-7 cursor-pointer" />
+                      <q-icon
+                        :name="mostrarSenha ? 'visibility_off' : 'visibility'"
+                        class="text-grey-7 cursor-pointer"
+                        @click="mostrarSenha = !mostrarSenha"
+                      />
                     </template>
                   </q-input>
                 </div>
@@ -97,6 +101,7 @@ import { api } from '../boot/axios'
 
 const login = ref('')
 const senha = ref('')
+const mostrarSenha = ref(false)
 const router = useRouter()
 const $q = useQuasar()
 

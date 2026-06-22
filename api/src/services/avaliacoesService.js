@@ -30,6 +30,21 @@ export const buscarPorId = async (id) => {
   return rows[0] || null;
 };
 
+export const listarPorEncomenda = async (encomenda_id) => {
+  const { rows } = await pool.query(
+    `SELECT a.*,
+            av.nome as avaliador_nome,
+            u.nome as avaliado_nome
+     FROM avaliacoes a
+     JOIN usuarios av ON a.avaliador_id = av.id
+     JOIN usuarios u ON a.avaliado_id = u.id
+     WHERE a.encomenda_id = $1
+     ORDER BY a.data_avaliacao DESC`,
+    [encomenda_id]
+  );
+  return rows;
+};
+
 export const listarDoUsuario = async (usuario_id) => {
   const { rows } = await pool.query(
     `SELECT a.*, 

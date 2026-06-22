@@ -7,6 +7,7 @@ import encomendasRouter from './encomendasRouter.js';
 import propostasRouter from './propostasRouter.js';
 import pagamentosRouter from './pagamentosRouter.js';
 import avaliacoesRouter from './avaliacoesRouter.js';
+import mensagensRouter from './mensagensRouter.js';
 import { autenticar } from '../middlewares/authMiddleware.js';
 
 const router = Router();
@@ -19,5 +20,6 @@ router.use('/encomendas', autenticar, encomendasRouter);
 router.use('/propostas', autenticar, propostasRouter);
 router.use('/pagamentos', autenticar, pagamentosRouter);
 router.use('/avaliacoes', autenticar, avaliacoesRouter);
+router.use('/mensagens', autenticar, mensagensRouter);
 
 export default router;
